@@ -77,7 +77,7 @@ final public class ContactsPickerViewController: UIViewController {
         $0.register(ContactTableViewCell.self,
                     forCellReuseIdentifier: ContactTableViewCell.identifier)
         return $0
-        }(UITableView(frame: .zero, style: .plain))
+    }(UITableView(frame: .zero, style: .plain))
     
     // MARK: Initialize
     
@@ -113,7 +113,7 @@ final public class ContactsPickerViewController: UIViewController {
         extendedLayoutIncludesOpaqueBars = true
         edgesForExtendedLayout = .bottom
         definesPresentationContext = true
-
+        
         updateContacts()
     }
     
@@ -163,8 +163,8 @@ final public class ContactsPickerViewController: UIViewController {
             DispatchQueue.main.async {
                 self.fetchContacts(completionHandler: completionHandler)
             }
-
-        case .denied, .restricted:
+            
+        default:
             /// User has denied the current app to access the contacts.
             let productName = Bundle.main.dlgpicker_appName
             let alert = UIAlertController(title: "Permission denied", message: "\(productName) does not have access to contacts. Please, allow the application to access to your contacts.", preferredStyle: .alert)
@@ -177,6 +177,7 @@ final public class ContactsPickerViewController: UIViewController {
                 self.alertController?.dismiss(animated: true)
             }
             alert.show()
+            break
         }
     }
     
@@ -298,7 +299,7 @@ extension ContactsPickerViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
         if searchController.isActive { return 0 }
         tableView.scrollToRow(at: IndexPath(row: 0, section: index), at: .top , animated: false)
-        return sortedContactKeys.index(of: title)!
+        return sortedContactKeys.firstIndex(of: title)!
     }
     
     public func sectionIndexTitles(for tableView: UITableView) -> [String]? {
@@ -313,7 +314,7 @@ extension ContactsPickerViewController: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ContactTableViewCell.identifier) as! ContactTableViewCell
-       
+        
         guard let contact = contact(at: indexPath) else { return UITableViewCell() }
         
         if let selectedContact = selectedContact, selectedContact.value == contact.value {
